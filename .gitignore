@@ -1,0 +1,14 @@
+# Byte-compiled / cached files
+__pycache__/
+*.py[cod]
+
+# Backup files
+*.bak
+*.swp
+
+# macOS / Windows system files
+.DS_Store
+Thumbs.db
+
+# VS Code settings 
+.vscode/
