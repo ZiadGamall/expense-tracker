@@ -26,7 +26,9 @@ expense_tracker/
 ├── transaction.py      # Transaction class
 ├── utils.py            # Data logic and helpers
 ├── data/
-│   └── transactions.csv  # Transaction history
+│   ├── .gitkeep  # (invisible file just to keep the folder)
+├── .gitignore
+└── README.md
 ```
 ---
 

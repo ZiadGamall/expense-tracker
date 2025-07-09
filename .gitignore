@@ -12,3 +12,6 @@ Thumbs.db
 
 # VS Code settings 
 .vscode/
+
+# CSV file
+data/transactions.csv
