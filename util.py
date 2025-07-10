@@ -27,6 +27,23 @@ def save_transaction(transaction, file_path="./data/transactions.csv"):
         writer.writerow(transaction.to_dict())
 
 
+def format_transactions(all_transactions):
+    """
+    Formats transactions into strings.
+
+    Returns a list of formatted transactions to be printed.
+    """
+    formatted_transactions = ["\n----------------------------\n"]
+    for index, transaction in enumerate(all_transactions):
+        if not transaction:
+            continue
+        lines = [f"Transaction {index + 1}: \n"]
+        lines += [f"{key}: {value}" for key,value in transaction.items()]
+        lines.append("----------------------------\n")
+        formatted_transactions.append("\n".join(lines))
+    return formatted_transactions
+
+
 def view_transactions(file_path="./data/transactions.csv"):
     """
     Read all the transactions from the csv file.
@@ -38,16 +55,9 @@ def view_transactions(file_path="./data/transactions.csv"):
         with open(file_path, encoding="utf-8") as file:
             reader = csv.DictReader(file)
             all_transactions = []
-
-            for index, row in enumerate(reader):
-                transaction = f"Transaction {index + 1}: \n\n"
-                # Adding properties to the string
-                for prop in row:
-                    transaction += f"{prop.title()}: {row[prop].strip()}\n"
-                transaction += "----------------------------\n"
+            for transaction in reader:
                 all_transactions.append(transaction)
-            
-            return all_transactions
+            return format_transactions(all_transactions)
 
     except FileNotFoundError:
         raise FileNotFoundError(f"File '{file_path}' not found. Make sure it exists.")
