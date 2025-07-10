@@ -1,4 +1,5 @@
 from datetime import datetime, date, time
+from difflib import get_close_matches
 
 """
 transaction.py
@@ -34,6 +35,23 @@ class Transaction:
         print(
             f"A {self.type} transaction was created on {self.date.strftime('%B %d, %Y')} at {self.time.strftime('%I:%M %p')}"
         )
+
+    @property
+    def type(self):
+        return self._type
+    
+    @type.setter
+    def type(self, value):
+        """
+        Validate the provided type.
+        Accepts only 'income' or 'expense', while accounting for typos.
+        Raises a ValueError otherwise.
+        """
+        valid_input = ["income", "expense"]
+        if match := get_close_matches(value, valid_input, n=1, cutoff=0.6):
+            self._type = match[0]
+        else:
+            raise ValueError("Incorrect transaction type. Accepted types are 'income' and 'expense'")
 
     @property
     def date(self):

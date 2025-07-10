@@ -36,7 +36,7 @@ while True:
     match choice:
         # Create a Transaction object from user input
         case 1:
-            type = input("Transaction type: ").strip()
+            type = input("Transaction type: ").strip().lower()
             amount = input("Amount: ").strip()
             category = input("Category: ").strip()
             description = input("Description: ").strip()
