@@ -11,9 +11,9 @@ Handles user input, transaction creation, and menu navigation.
 
 while True:
     print(
-        f"""Welcome to Expense Tracker!
+        f"""\nWelcome to Expense Tracker!
 
-----------------------------------
+----------------------------
           
 1. Add a transaction
 2. View all transactions
@@ -59,17 +59,29 @@ while True:
                 print("An error occured while saving.")
         case 2:
             try:
-                # Get all the transactions using view_transaction function
+                # Get all the transactions using view_transaction()
                 transactions = util.view_transactions()
                 for transaction in transactions:
-                    print(transaction)
+                    print(transaction, end="")
             except FileNotFoundError as e:
                 print(f"Error: {e}")
 
         case 3:
-            pass
+            try:
+                # Get transactions of type 'income' using filter_transactions_by_type()
+                filtered_transactions = util.filter_transactions_by_type("income")
+                for transaction in filtered_transactions:
+                    print(transaction, end="")
+            except FileNotFoundError as e:
+                print(f"Error: {e}")
         case 4:
-            pass
+            try:
+                # Get transactions of type 'expense' using filter_transactions_by_type()
+                filtered_transactions = util.filter_transactions_by_type("expense")
+                for transaction in filtered_transactions:
+                    print(transaction, end="")
+            except FileNotFoundError as e:
+                print(f"Error: {e}")
         case 5:
             pass
         case 6:
