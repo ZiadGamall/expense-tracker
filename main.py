@@ -49,7 +49,7 @@ while True:
                     type, amount, category, description, date, time
                 )
             except (TypeError, ValueError) as e:
-                print("Error: ", e)
+                print(f"Error: {e}")
                 continue
             # Save the created transaction to the csv file
             try:
@@ -58,7 +58,14 @@ while True:
             except Exception:
                 print("An error occured while saving.")
         case 2:
-            pass
+            try:
+                # Get all the transactions using view_transaction function
+                transactions = util.view_transactions()
+                for transaction in transactions:
+                    print(transaction)
+            except FileNotFoundError as e:
+                print(f"Error: {e}")
+
         case 3:
             pass
         case 4:
