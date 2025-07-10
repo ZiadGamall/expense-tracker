@@ -38,7 +38,7 @@ def format_transactions(all_transactions):
         if not transaction:
             continue
         lines = [f"Transaction {index + 1}: \n"]
-        lines += [f"{key}: {value}" for key,value in transaction.items()]
+        lines += [f"{key}: {value}" for key, value in transaction.items()]
         lines.append("----------------------------\n")
         formatted_transactions.append("\n".join(lines))
     return formatted_transactions
@@ -58,6 +58,36 @@ def view_transactions(file_path="./data/transactions.csv"):
             for transaction in reader:
                 all_transactions.append(transaction)
             return format_transactions(all_transactions)
+
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File '{file_path}' not found. Make sure it exists.")
+
+
+def filter_transactions_by_type(txn_type, file_path="./data/transactions.csv"):
+    """
+    Filters the transactions by a given type.
+
+    Returns a list of transactions with the given type.
+    Raises FileNotFound error if the file doesn't exist.
+    """
+    try:
+        with open(file_path, encoding="utf-8") as file:
+            total = 0
+            reader = csv.DictReader(file)
+            filtered_transactions = [
+                row for row in reader if row["type"] == txn_type.lower()
+            ]
+            for transaction in filtered_transactions:
+                total += float(transaction["amount"])
+            filtered_transactions = format_transactions(filtered_transactions)
+            filtered_transactions.append(
+                f"Total {txn_type}: {total}\n----------------------------\n"
+            )
+            return (
+                filtered_transactions
+                if filtered_transactions
+                else f"No transactions match the given type."
+            )
 
     except FileNotFoundError:
         raise FileNotFoundError(f"File '{file_path}' not found. Make sure it exists.")
