@@ -63,6 +63,16 @@ def view_transactions(file_path="./data/transactions.csv"):
         raise FileNotFoundError(f"File '{file_path}' not found. Make sure it exists.")
 
 
+def get_total_amount(transactions):
+    """
+    Returns the total amount of a list of transactions.
+    """
+    total = 0
+    for transaction in transactions:
+        total += float(transaction["amount"])
+    return total
+
+
 def filter_transactions_by_type(txn_type, file_path="./data/transactions.csv"):
     """
     Filters the transactions by a given type.
@@ -72,21 +82,21 @@ def filter_transactions_by_type(txn_type, file_path="./data/transactions.csv"):
     """
     try:
         with open(file_path, encoding="utf-8") as file:
-            total = 0
             reader = csv.DictReader(file)
             filtered_transactions = [
                 row for row in reader if row["type"] == txn_type.lower()
             ]
-            for transaction in filtered_transactions:
-                total += float(transaction["amount"])
+
+            total = get_total_amount(filtered_transactions)
             filtered_transactions = format_transactions(filtered_transactions)
             filtered_transactions.append(
                 f"Total {txn_type}: {total}\n----------------------------\n"
             )
+
             return (
                 filtered_transactions
                 if filtered_transactions
-                else f"No transactions match the given type."
+                else [f"No {txn_type} transactions were found.\n"]
             )
 
     except FileNotFoundError:
