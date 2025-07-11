@@ -57,7 +57,10 @@ def view_transactions(file_path="./data/transactions.csv"):
             all_transactions = []
             for transaction in reader:
                 all_transactions.append(transaction)
-            return format_transactions(all_transactions)
+            total = get_total_amount(all_transactions)
+            all_transactions = format_transactions(all_transactions)
+            all_transactions.append(f"Total amount: {total}\n----------------------------\n")
+            return all_transactions if all_transactions else ["No transactions were found.\n"]
 
     except FileNotFoundError:
         raise FileNotFoundError(f"File '{file_path}' not found. Make sure it exists.")
