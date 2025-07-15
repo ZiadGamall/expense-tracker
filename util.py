@@ -59,8 +59,14 @@ def view_transactions(file_path="./data/transactions.csv"):
                 all_transactions.append(transaction)
             total = get_total_amount(all_transactions)
             all_transactions = format_transactions(all_transactions)
-            all_transactions.append(f"Total amount: {total}\n----------------------------\n")
-            return all_transactions if all_transactions else ["No transactions were found.\n"]
+            all_transactions.append(
+                f"Total amount: {total}\n----------------------------\n"
+            )
+            return (
+                all_transactions
+                if all_transactions
+                else ["No transactions were found.\n"]
+            )
 
     except FileNotFoundError:
         raise FileNotFoundError(f"File '{file_path}' not found. Make sure it exists.")
@@ -104,3 +110,65 @@ def filter_transactions_by_type(txn_type, file_path="./data/transactions.csv"):
 
     except FileNotFoundError:
         raise FileNotFoundError(f"File '{file_path}' not found. Make sure it exists.")
+
+
+def view_monthly_summary(file_path="./data/transactions.csv"):
+    """
+    Displays a monthly summary showing total income, expenses, and net savings for each month.
+
+    Groups transactions by month using the date field and prints summaries to the terminal.
+    """
+
+    with open(file_path, "r") as file:
+        jan = []
+        feb = []
+        mar = []
+        apr = []
+        may = []
+        jun = []
+        jul = []
+        aug = []
+        sep = []
+        oct = []
+        nov = []
+        dec = []
+        months = [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+        month_names = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ]
+
+        # Filtering transactions into lists based on months
+        reader = csv.DictReader(file)
+        for row in reader:
+            month_index = int(row["date"][5:7]) - 1
+            months[month_index].append(row)
+
+        for i, month in enumerate(months):
+            if month:
+                expenses = [row for row in month if row["type"] == "expense"]
+                income = [row for row in month if row["type"] == "income"]
+                total_expense_amount = get_total_amount(expenses)
+                total_income_amount = get_total_amount(income)
+                print(
+                    f"""===== Monthly Summary ({month_names[i]} 2025) =====
+
+Total Income:      {total_income_amount} EGP
+Total Expenses:    {total_expense_amount} EGP
+-------------------------------
+Net Savings:       {total_income_amount - total_expense_amount}"""
+                )
+
+    return
+
+
