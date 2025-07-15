@@ -172,3 +172,11 @@ Net Savings:       {total_income_amount - total_expense_amount}"""
     return
 
 
+def filter_by_category(category, transactions):
+        """"
+        Filters a list of transactions by a given category.
+
+        Returns a list of filtered transactions.
+        """
+        categorized_transactions = [transaction for transaction in transactions if transaction["category"] == category]
+        return categorized_transactions
