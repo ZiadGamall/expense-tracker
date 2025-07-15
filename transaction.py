@@ -39,7 +39,7 @@ class Transaction:
     @property
     def type(self):
         return self._type
-    
+
     @type.setter
     def type(self, value):
         """
@@ -51,7 +51,9 @@ class Transaction:
         if match := get_close_matches(value, valid_input, n=1, cutoff=0.6):
             self._type = match[0]
         else:
-            raise ValueError("Incorrect transaction type. Accepted types are 'income' and 'expense'")
+            raise ValueError(
+                "Incorrect transaction type. Accepted types are 'income' and 'expense'"
+            )
 
     @property
     def date(self):
@@ -131,6 +133,37 @@ class Transaction:
             self._amount = float(value)
         except ValueError:
             raise ValueError("Invalid amount format. Must be a number.")
+
+    @property
+    def category(self):
+        return self._category
+
+    @category.setter
+    def category(self, value):
+        """
+        Validate the provided category.
+        Accepts only written categories, while accounting for typos.
+        """
+        categories = [
+            "food",
+            "utilities",
+            "transport",
+            "shopping",
+            "entertainment",
+            "rent",
+            "health",
+            "education",
+            "subscriptions",
+            "other",
+        ]
+        if self.type == "expense":
+            if matched := get_close_matches(value, categories, n=1, cutoff=0.6):
+                self._category = matched[0]
+            else:
+                # If no match fallback to 'other'
+                self._category = "other"
+        else:
+            self._category = value.strip().lower()
 
     def to_dict(self):
         """
