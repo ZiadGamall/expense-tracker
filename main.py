@@ -83,9 +83,20 @@ while True:
             except FileNotFoundError as e:
                 print(f"Error: {e}")
         case 5:
-            pass
+            try:
+                print(util.view_monthly_summary())
+            except FileNotFoundError as e:
+                print(f"Error: {e}")
         case 6:
-            pass
+            cat = input("Category: ")
+            try:
+                transactions = util.get_transactions()
+                cat_txn = util.filter_by_category(cat, transactions)
+                for transaction in util.format_transactions(cat_txn):
+                    print(transaction)
+
+            except (ValueError, FileNotFoundError) as e:
+                print(f"Error: {e}")
         case 7:
             print("Thank you! Bye bye!")
             break
