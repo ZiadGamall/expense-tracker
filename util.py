@@ -237,6 +237,21 @@ def filter_by_category(category, transactions):
 
     Returns a list of filtered transactions.
     """
+    categories = [
+        "food",
+        "utilities",
+        "transport",
+        "shopping",
+        "entertainment",
+        "rent",
+        "health",
+        "education",
+        "subscriptions",
+        "other",
+    ]
+
+    if category not in categories:
+        raise ValueError(f"Invalid category. Choose from: {', '.join(categories)}.")
     categorized_transactions = [
         transaction
         for transaction in transactions
