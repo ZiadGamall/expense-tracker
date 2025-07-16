@@ -36,17 +36,25 @@ while True:
     match choice:
         # Create a Transaction object from user input
         case 1:
-            type = input("Transaction type: ").strip().lower()
+            type = input("Transaction type (income / expense): ").strip().lower()
             amount = input("Amount: ").strip()
-            category = input("Category: ").strip()
+            category = input(
+                "Category (food, rent, transport, etc.): "
+                if type == "expense"
+                else "Category: "
+            ).strip()
             description = input("Description: ").strip()
-            date = input("Date: ").strip()
-            time = input("Time: ").strip()
+            date = input("Date (YYYY-MM-DD) or leave blank for today: ").strip()
+            time = input("Time (HH:MM 24-hour) or leave blank for now: ").strip()
 
             # Handle validation errors from amount, date, or time
             try:
                 transaction = Transaction(
                     type, amount, category, description, date, time
+                )
+                # Display formatted confirmation with full date and 24-hour time
+                print(
+                    f"\nAn {transaction.type} transaction was created on {transaction.date.strftime('%B %d, %Y')} at {transaction.time.strftime('%I:%M %p')}"
                 )
             except (TypeError, ValueError) as e:
                 print(f"Error: {e}")

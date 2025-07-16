@@ -31,10 +31,6 @@ class Transaction:
         self.time = (
             time if time else datetime.now().replace(second=0, microsecond=0).time()
         )
-        # Display formatted confirmation with full date and 24-hour time
-        print(
-            f"A {self.type} transaction was created on {self.date.strftime('%B %d, %Y')} at {self.time.strftime('%I:%M %p')}"
-        )
 
     @property
     def type(self):
