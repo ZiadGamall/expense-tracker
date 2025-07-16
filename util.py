@@ -118,6 +118,11 @@ def view_monthly_summary(file_path="./data/transactions.csv"):
 
     Groups transactions by month using the date field and prints summaries to the terminal.
     """
+    if not os.path.exists(file_path):
+        raise FileNotFoundError("File does not exist.")
+
+    if os.path.getsize(file_path) == 0:
+        return "No data available.\n"
 
     with open(file_path, "r") as file:
         jan = []
@@ -147,7 +152,7 @@ def view_monthly_summary(file_path="./data/transactions.csv"):
             "November",
             "December",
         ]
-
+        monthly_summary = []
         # Filtering transactions into lists based on months
         reader = csv.DictReader(file)
         for row in reader:
@@ -160,23 +165,81 @@ def view_monthly_summary(file_path="./data/transactions.csv"):
                 income = [row for row in month if row["type"] == "income"]
                 total_expense_amount = get_total_amount(expenses)
                 total_income_amount = get_total_amount(income)
-                print(
+
+                monthly_summary.append(
                     f"""===== Monthly Summary ({month_names[i]} 2025) =====
 
 Total Income:      {total_income_amount} EGP
 Total Expenses:    {total_expense_amount} EGP
 -------------------------------
-Net Savings:       {total_income_amount - total_expense_amount}"""
-                )
+Net Savings:       {total_income_amount - total_expense_amount}
 
-    return
+{format_expenses(expenses)}
+
+Transactions this month: {len(month)}
+
+======================================="""
+                )
+        return "\n".join(monthly_summary)
+
+
+def format_expenses(expenses):
+    """
+    Format expense transactions into a summary string.
+
+    Calculates total spending, highlights the top expense category, and
+    provides a breakdown of all non-zero categories.
+
+    Returns a formatted string to be printed in the monthly summary.
+    """
+    formatted_text = []
+    categories = [
+        "food",
+        "utilities",
+        "transport",
+        "shopping",
+        "entertainment",
+        "rent",
+        "health",
+        "education",
+        "subscriptions",
+        "other",
+    ]
+
+    # Store the categories with their total amount in a dict
+    category_totals = {cat: 0 for cat in categories}
+    for txn in expenses:
+        # Increase the amount for each category by the amount in each matching expense
+        category_totals[txn["category"]] += float(txn["amount"])
+    total_expenses = get_total_amount(expenses)
+
+    # Get the top expense and value
+    top_expense = max(category_totals, key=category_totals.get)
+    top_value = category_totals[top_expense]
+
+    formatted_text.append(f"Top Expense Category: {top_expense.title()}")
+    formatted_text.append(
+        f"  → Total: {top_value} EGP ({(top_value/total_expenses * 100):.1f}% of expenses)\n"
+    )
+    formatted_text.append("Category breakdown:")
+
+    # Display the categories that are not zero valued as "-Cateogry:     value EGP"
+    for key, value in category_totals.items():
+        if value:
+            formatted_text.append(f"- {key.title():<15} {value:>8.2f} EGP")
+
+    return "\n".join(formatted_text)
 
 
 def filter_by_category(category, transactions):
-        """"
-        Filters a list of transactions by a given category.
+    """
+    Filters a list of transactions by a given category.
 
-        Returns a list of filtered transactions.
-        """
-        categorized_transactions = [transaction for transaction in transactions if transaction["category"] == category]
-        return categorized_transactions
+    Returns a list of filtered transactions.
+    """
+    categorized_transactions = [
+        transaction
+        for transaction in transactions
+        if transaction["category"] == category
+    ]
+    return categorized_transactions
