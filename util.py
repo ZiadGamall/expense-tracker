@@ -1,5 +1,6 @@
 import csv
 import os
+from collections import defaultdict
 
 """
 util.py
@@ -117,19 +118,7 @@ def view_monthly_summary(file_path="./data/transactions.csv"):
 
     if os.path.getsize(file_path) == 0:
         return "No data available.\n"
-    jan = []
-    feb = []
-    mar = []
-    apr = []
-    may = []
-    jun = []
-    jul = []
-    aug = []
-    sep = []
-    oct = []
-    nov = []
-    dec = []
-    months = [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+
     month_names = [
         "January",
         "February",
@@ -147,20 +136,23 @@ def view_monthly_summary(file_path="./data/transactions.csv"):
     monthly_summary = []
     # Filtering transactions into lists based on months
     transactions = get_transactions(file_path)
+    monthly_data = defaultdict(list)
+    
+    for txn in transactions:
+        year_month = txn["date"][:7]
+        monthly_data[year_month].append(txn)
 
-    for row in transactions:
-        month_index = int(row["date"][5:7]) - 1
-        months[month_index].append(row)
+    for ym, month_txn in sorted(monthly_data.items()):
+        year, month = ym.split("-")
+        month_name = month_names[int(month) - 1]
 
-    for i, month in enumerate(months):
-        if month:
-            expenses = [row for row in month if row["type"] == "expense"]
-            income = [row for row in month if row["type"] == "income"]
-            total_expense_amount = get_total_amount(expenses)
-            total_income_amount = get_total_amount(income)
+        expenses = [txn for txn in month_txn if txn["type"] == "expense"]
+        income = [txn for txn in month_txn if txn["type"] == "income"]
+        total_expense_amount = get_total_amount(expenses)
+        total_income_amount = get_total_amount(income)
 
-            monthly_summary.append(
-                f"""===== Monthly Summary ({month_names[i]} 2025) =====
+        monthly_summary.append(
+            f"""===== Monthly Summary ({month_name} {year}) =====
 
 Total Income:      {total_income_amount} EGP
 Total Expenses:    {total_expense_amount} EGP
